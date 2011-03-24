@@ -1,3 +1,4 @@
+module Hitomi::Interpolation;
 use Hitomi::StreamEventKind;
 
 grammar Hitomi::Interpolation::Grammar {
@@ -22,7 +23,7 @@ grammar Hitomi::Interpolation::Grammar {
 #       same, (3) improve the grammar.
 
 sub interpolate($text, $filepath, $lineno = -1, $offset = 0,
-                $lookup = 'strict') {
+                $lookup = 'strict') is export {
 
     # TODO: Make it impossible to fail here. See the above note.
     return $text

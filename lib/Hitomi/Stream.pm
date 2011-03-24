@@ -28,7 +28,7 @@ class Hitomi::Stream {
         return $serializer.serialize(self);
     }
 
-    method llist() {
+    method list() {
         # RAKUDO: A complex set of circumstances may cause the
         #         array to have been nested one level too deeply at
         #         this point. Compensating.

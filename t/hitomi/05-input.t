@@ -22,7 +22,7 @@ constant Attrs      = Hitomi::Attrs;
 
 { # test_text_node_pos_single_line
     my $text = '<elem>foo bar</elem>';
-    my @events = (XMLParser.new($text)).llist;
+    my @events = (XMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is 'foo bar', $data, 'the text is "foo bar"';
@@ -32,7 +32,7 @@ constant Attrs      = Hitomi::Attrs;
 { # test_text_node_pos_multi_line
     my $text = '<elem>foo
 bar</elem>';
-    my @events = (XMLParser.new($text)).llist;
+    my @events = (XMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is "foo\nbar", $data, 'the text is "foo\nbar"';
@@ -43,7 +43,7 @@ bar</elem>';
 
 { # test_element_attribute_order
     my $text = '<elem title="baz" id="foo" class="bar" />';
-    my @events = (XMLParser.new($text)).llist;
+    my @events = (XMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[0];
     is Hitomi::StreamEventKind::start, $kind, 'got a start event';
     my ($tag, $attrib) = @($data);
@@ -55,7 +55,7 @@ bar</elem>';
 
 { # test_unicode_input
     my $text = "<div>\c[2013]</div>";
-    my @events = (XMLParser.new($text)).llist;
+    my @events = (XMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is "\c[2013]", $data, 'the character survived';
@@ -65,7 +65,7 @@ skip(1);
 # commented out: no Buf yet in Rakudo
 ##{ # test_latin1_encoded
 ##    my $text = "<div>\x[f6]</div>".encode('iso-8859-1');
-##    my @events = (XMLParser.new($text, :encoding<iso-8859-1>)).llist;
+##    my @events = (XMLParser.new($text, :encoding<iso-8859-1>)).list;
 ##    my ($kind, $data, $pos) = @events[1];
 ##    is Hitomi::StreamEventKind::text, $kind, 'got a text event';
 ##    is "\x[f6]", $data, 'the character survived';
@@ -77,7 +77,7 @@ skip(1);
 ##    my $text = qq[<?xml version="1.0" encoding="iso-8859-1" ?>
 ##    <div>\x[f6]</div>
 ##    ].encode'iso-8859-1');
-##    my @events = (XMLParser.new($text, :encoding<iso-8859-1>)).llist;
+##    my @events = (XMLParser.new($text, :encoding<iso-8859-1>)).list;
 ##    my ($kind, $data, $pos) = @events[2];
 ##    is Hitomi::StreamEventKind::text, $kind, 'got a text event';
 ##    is "\x[f6]", $data, 'the character survived';
@@ -89,7 +89,7 @@ skip(1);
 ##    my $text = q[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 ##    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 ##    <html>&nbsp;</html>];
-##    my @events = (XMLParser.new($text)).llist;
+##    my @events = (XMLParser.new($text)).list;
 ##    my ($kind, $data, $pos) = @events[2];
 ##    is Hitomi::StreamEventKind::text, $kind, 'got a text event';
 ##    is "\x[a0]", $data, 'the entity was turned into a character';
@@ -97,7 +97,7 @@ skip(1);
 
 { # test_html_entity_without_dtd
     my $text = '<html>&nbsp;</html>';
-    my @events = (XMLParser.new($text)).llist;
+    my @events = (XMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is "\x[a0]", $data, 'the entity was turned into a character';
@@ -105,7 +105,7 @@ skip(1);
 
 { # test_html_entity_in_attribute
     my $text = '<p title="&nbsp;"/>';
-    my @events = (XMLParser.new($text)).llist;
+    my @events = (XMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[0];
     is Hitomi::StreamEventKind::start, $kind, 'got a start event';
     $data //= [*, {}];
@@ -120,7 +120,7 @@ skip(1);
     <html>&junk;</html>];
     my $survived = False;
     try {
-        XMLParser.new($text).llist;
+        XMLParser.new($text).list;
         $survived = True;
     }
     ok !$survived, 'got a parse error';
@@ -130,7 +130,7 @@ skip(1);
     my $text = '<html>&junk;</html>';
     my $survived = False;
     try {
-        XMLParser.new($text).llist;
+        XMLParser.new($text).list;
         $survived = True;
     }
     ok !$survived, 'got a parse error';
@@ -139,7 +139,7 @@ skip(1);
 todo('not implemented yet', 6);
 { # test_text_node_pos_single_line
     my $text = '<elem>foo bar</elem>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is 'foo bar', $data, 'the text is "foo bar"';
@@ -149,7 +149,7 @@ todo('not implemented yet', 6);
 { # test_text_node_pos_multi_line
     my $text = '<elem>foo
 bar</elem>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is "foo\nbar", $data, 'the text is "foo bar"';
@@ -160,7 +160,7 @@ skip(1);
 # commented out: no Buf yet in Rakudo
 ##{ # test_input_encoding_text
 ##    my $text = "<div>\x[f6]</div>".encode('iso-8859-1');
-##    my @events = (HTMLParser.new($text)).llist;
+##    my @events = (HTMLParser.new($text)).list;
 ##    my ($kind, $data, $pos) = @events[1];
 ##    is Hitomi::StreamEventKind::text, $kind, 'got a text event';
 ##    is "\x[f6]", $data, 'the character survived';
@@ -170,7 +170,7 @@ skip(1);
 # commented out: no Buf yet in Rakudo
 ##{ # test_input_encoding_attribute
 ##    my $text = qq[<div title="\x[f6]"></div>].encode('iso-8859-1');
-##    my @events = (HTMLParser.new($text)).llist;
+##    my @events = (HTMLParser.new($text)).list;
 ##    my ($kind, $data, $pos) = @events[0];
 ##    my ($tag, $attrib) = @($data);
 ##    is Hitomi::StreamEventKind::text, $kind, 'got a text event';
@@ -180,7 +180,7 @@ skip(1);
 todo('not implemented yet', 49);
 { # test_unicode_input
     my $text = "<div>\c[2013]</div}";
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is "\c[2013]", $data, 'the character survived';
@@ -188,7 +188,7 @@ todo('not implemented yet', 49);
 
 { # test_html_entity_in_attribute
     my $text = '<p title="&nbsp;"></p>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[0];
     is Hitomi::StreamEventKind::start, $kind, 'got a start event';
     $data //= [*, {}];
@@ -199,7 +199,7 @@ todo('not implemented yet', 49);
 
 { # test_html_entity_in_text
     my $text = '<p>&nbsp;</p>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[1];
     is Hitomi::StreamEventKind::text, $kind, 'got a text event';
     is "\x[a0]", $data, 'the entity was turned into a character';
@@ -207,7 +207,7 @@ todo('not implemented yet', 49);
 
 { # test_processing_instruction
     my $text = '<?php echo "Foobar" ?>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $td, $pos) = @events[0];
     my ($target, $data) = $td;
     is Hitomi::StreamEventKind::pi, $kind, 'got a pi event';
@@ -217,7 +217,7 @@ todo('not implemented yet', 49);
 
 { # test_xmldecl
     my $text = '<?xml version="1.0" ?><root />';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[0];
     my ($version, $encoding, $standalone) = $data;
     is Hitomi::StreamEventKind::xml-decl, $kind, 'got an xml-decl event';
@@ -228,7 +228,7 @@ todo('not implemented yet', 49);
 
 { # test_xmldecl_encoding
     my $text = '<?xml version="1.0" encoding="utf-8" ?><root />';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[0];
     my ($version, $encoding, $standalone) = $data;
     is Hitomi::StreamEventKind::xml-decl, $kind, 'got an xml-decl event';
@@ -239,7 +239,7 @@ todo('not implemented yet', 49);
 
 { # test_xmldecl_standalone
     my $text = '<?xml version="1.0" standalone="yes" ?><root />';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $data, $pos) = @events[0];
     my ($version, $encoding, $standalone) = $data;
     is Hitomi::StreamEventKind::xml-decl, $kind, 'got an xml-decl event';
@@ -250,7 +250,7 @@ todo('not implemented yet', 49);
 
 { # test_processing_instruction_trailing_qmark
     my $text = '<?php echo "Foobar" ??>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     my ($kind, $dt, $pos) = @events[0];
     my ($target, $data) = $dt;
     is Hitomi::StreamEventKind::pi, $kind, 'got a pi event';
@@ -260,7 +260,7 @@ todo('not implemented yet', 49);
 
 { # test_out_of_order_tags
     my $text = '<span><b>Foobar</span></b>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     is 5, +@events, 'got 5 events';
     @events ||= [] xx 5;
     is [Hitomi::StreamEventKind::start, ['span', []]], @events[0][0,1], 'o1[1]';
@@ -272,7 +272,7 @@ todo('not implemented yet', 49);
 
 { # test_out_of_order_tags2
     my $text = '<span class="baz"><b><i>Foobar</span></b></i>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     is 7, +@events, 'got 7 events';
     @events ||= [] xx 7;
     is [Hitomi::StreamEventKind::start, ['span', Attrs.new(:class<baz>)]],
@@ -287,7 +287,7 @@ todo('not implemented yet', 49);
 
 { # test_out_of_order_tags3
     my $text = '<span><b>Foobar</i>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     is 5, +@events, 'got 5 events';
     @events ||= [] xx 5;
     is [Hitomi::StreamEventKind::start, ['span', []]], @events[0][0,1], 'o3[1]';
@@ -299,7 +299,7 @@ todo('not implemented yet', 49);
 
 { # test_hex_charref
     my $text = '<span>&#x27;</span>';
-    my @events = (HTMLParser.new($text)).llist;
+    my @events = (HTMLParser.new($text)).list;
     is 3, +@events, 'got 3 events';
     @events ||= [] xx 3;
     is [Hitomi::StreamEventKind::start, ['span', []]], @events[0][0,1], 'hc[1]';

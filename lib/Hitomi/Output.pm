@@ -8,7 +8,7 @@ class Hitomi::XMLSerializer {
     has @!filters;
 
     method serialize($stream) {
-        return join '', [~] gather for $stream.llist {
+        return join '', [~] gather for $stream.list {
             my ($kind, $data, $pos) = @($_);
             if ($kind ~~ Hitomi::StreamEventKind::start
                        | Hitomi::StreamEventKind::empty) {

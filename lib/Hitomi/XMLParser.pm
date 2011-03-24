@@ -3,19 +3,19 @@ use v6;
 use Hitomi::Stream;
 
 grammar Hitomi::XMLGrammar {
-    regex TOP { ^ <doctype>? <xmlcontent>* $ };
+    regex TOP { ^ <doctype>? <xmlcontent>* $ }
 
     token xmlcontent {
         || <element>
         || <textnode>
-    };
+    }
 
     token element {
         '<' <name=ident> <attrs> '/>'
         ||
-        '<' <name=ident> <attrs> '>'
+        '<' (<name=ident>) <attrs> '>'
         <xmlcontent>+
-        '</' $<name> '>'
+        '</' $0 '>'
     }
 
     token attrs { <attr>* }
@@ -23,7 +23,7 @@ grammar Hitomi::XMLGrammar {
                 $<value>=[<-["]>+] '"' } # '
     token ident { <+alnum + [\-]>+ }
 
-    regex textnode { <-[<]>+ {*} }
+    regex textnode { <-[<>&]>+ }
 
     token doctype { '<!DOCTYPE' <name=ident> <externalId> '>' }
     token externalId { 'PUBLIC' <pubid> <system> }
@@ -70,9 +70,7 @@ class Hitomi::XMLParser {
         $text.subst('&nbsp;', "\x[a0]", :g)
     }
 
-    # RAKUDO: https://trac.parrot.org/parrot/ticket/536 makes the method
-    #         override the global 'list' sub if we call it 'list'
-    method llist() {
+    method list() {
         Hitomi::XMLGrammar.parse($!text) or die "Couldn't parse $!text";
         my @actions = self.make-events($/, $!text);
         return @actions;

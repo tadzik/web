@@ -20,7 +20,7 @@ my @invalid-xml =
 sub parse($text) {
     my $succeeded = False;
     try {
-        Hitomi::XMLParser.new($text).llist();
+        Hitomi::XMLParser.new($text).list();
         $succeeded = True;
     }
     $succeeded;

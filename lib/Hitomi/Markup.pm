@@ -66,7 +66,7 @@ class Hitomi::Template {
     }
 
     method _flatten($stream, $context) {
-        my @newstream = gather for $stream.llist -> $event {
+        my @newstream = gather for $stream.list -> $event {
             my ($kind, $data, $pos) = @($event);
             if ($kind ~~ Hitomi::StreamEventKind::expr) {
                 take [Hitomi::StreamEventKind::text,
@@ -99,12 +99,12 @@ class Hitomi::MarkupTemplate is Hitomi::Template {
 
         my @stream;
 
-        for $source.llist -> @event {
+        for $source.list -> @event {
             my ($kind, $data, $pos) = @event;
 
             if $kind ~~ Hitomi::StreamEventKind::text {
                 @stream.push:
-                    interpolate($data, $!filepath, $pos[1], $pos[2], $!lookup);
+                    interpolate( $data, $!filepath, $pos[1], $pos[2], $!lookup);
             }
             else {
                 @stream.push( [$kind, $data, $pos] );
