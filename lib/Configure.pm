@@ -16,7 +16,7 @@ my $parrot_dir = %*VM<config><build_dir>;
 my $rakudo_dir;
 my $perl6;
 
-regex parrot_in_rakudo { ( .* '/rakudo' ) '/parrot' }
+my regex parrot_in_rakudo { ( .* '/rakudo' ) '/parrot' }
 
 # There are two possible relationships between the parrot and rakudo
 # directories: rakudo/parrot or parrot/languages/rakudo
