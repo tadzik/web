@@ -11,7 +11,7 @@ class Handler {
 
     sub remove-initial-slash($s) {
         # RAKUDO: prefix:<~> needed because of [perl #71088]
-        ~$s.subst(rx[ ^ '/' ], '');
+        ~$s.subst(rx/ ^ '/' /, '');
     }
 
     submethod BUILD(:$!condition, :$!code, :$!http_method) {
