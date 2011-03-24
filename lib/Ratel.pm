@@ -1,6 +1,6 @@
 class Ratel {
     has $!source;
-    has $!compiled;
+    has $.compiled;
     has @!hunks;
     has %.transforms is rw;
 
@@ -22,16 +22,16 @@ class Ratel {
     multi method source(Str $text) {
         my $index = 0;
         $!source = $text;
-        my $source = "%]{$text}[%";
+        my $source = '%]' ~ $text ~ '[%';
         for %!transforms.kv -> $k, $v {
-            $source.=subst((eval "/'[%$k' (.*?) '%]'/"), -> $match {'[%' ~ $v($match[0]) ~ '%]'}, :g);
+            $source.=subst(rule {'[%'$k ([<!before '%]'>.]*) '%]'}, -> $match {'[%' ~ $v($match[0]) ~ '%]'}, :g);
         }
-        @!hunks = $source.comb(/'%]' (.*?) '[%'/);
+        @!hunks = $source.comb(rule {'%]' ([<!before '[%'>.]*) '[%'});
+        @!hunks>>.=subst(/^'%]' (.*) '[%'$/, -> $m { $m[0] }, :g);
         $!compiled
-            = $source.subst(/(['%]' | ^ ] .*? [ $ | '[%' ])/,
+            = $source.subst(/('%]' [<!before '[%'>.]* '[%')/,
                             {";\$.emit-hunk({$index++});"},
                             :g);
-        $!compiled = $!compiled;
         return;
     }
 
