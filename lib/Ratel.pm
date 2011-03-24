@@ -4,13 +4,13 @@ class Ratel {
     has @!hunks;
     has %.transforms is rw;
 
-    submethod BUILD(:%transforms, :$source) {
+    submethod BUILD {
         # XXX Needs to be re-thought to allow wrapping the contents of the
         # unquote, use parameterized delims, etc...
-        %!transforms = %transforms;
+        callsame; # attribute initialization;
         %!transforms{'='} = -> $a {"print $a"};
         %!transforms{'!'} = -> $a {'print %attrs<' ~ $a ~ '>'};
-        $.source($source);
+        self.source($!source);
     }
     multi method load(Str $filename) {
         $.source(slurp($filename));
