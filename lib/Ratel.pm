@@ -1,19 +1,25 @@
 class Ratel {
-    has $!source;
+    has $.source;
     has $.compiled;
     has @!hunks;
     has %.transforms is rw;
 
-    submethod BUILD {
-        # XXX Needs to be re-thought to allow wrapping the contents of the
-        # unquote, use parameterized delims, etc...
-        callsame; # attribute initialization;
+    method new (*%args) {
+        my $self = self.bless(*, |%args);
+        $self.initialize;
+        return $self;
+    }
+
+    method initialize {
+        # XXX Needs to be re-thought to allow wrapping the contents
+        # of the unquote, use parameterized delims, etc...
         %!transforms{'='} = -> $a {"print $a"};
         %!transforms{'!'} = -> $a {'print %attrs<' ~ $a ~ '>'};
-        self.source($!source);
+        self.source($.source);
     }
+
     multi method load(Str $filename) {
-        $.source(slurp($filename));
+        self.source(slurp($filename));
     }
 
     multi method source() {
@@ -27,7 +33,7 @@ class Ratel {
             $source.=subst(rule {'[%'$k ([<!before '%]'>.]*) '%]'}, -> $match {'[%' ~ $v($match[0]) ~ '%]'}, :g);
         }
         @!hunks = $source.comb(rule {'%]' ([<!before '[%'>.]*) '[%'});
-        @!hunks>>.=subst(/^'%]' (.*) '[%'$/, -> $m { $m[0] }, :g);
+        @!hunks>>.=subst(/^'%]' ([<!before '[%'>.]*) '[%'$/, -> $m { $m[0] }, :g);
         $!compiled
             = $source.subst(/('%]' [<!before '[%'>.]* '[%')/,
                             {";\$.emit-hunk({$index++});"},
