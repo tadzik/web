@@ -2,7 +2,7 @@ use v6;
 use Test;
 
 use Ratel;
-plan 2;
+plan 3;
 
 my $template = q|<html>
 <title>[%! title %]</title>
@@ -18,3 +18,5 @@ my $text = $r.render(:title('OMG HAI GUYS!!'));
 
 ok( $text ~~ /'item 2'/, 'Basic rendering' );
 ok( $text ~~ /'OMG HAI'/, 'Attribute interpolation' );
+
+lives_ok { Ratel.new() }, 'argless .new works';

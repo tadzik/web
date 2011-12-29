@@ -15,7 +15,7 @@ class Ratel {
         # of the unquote, use parameterized delims, etc...
         %!transforms{'='} = -> $a {"print $a"};
         %!transforms{'!'} = -> $a {'print %attrs<' ~ $a ~ '>'};
-        self.source($.source);
+        self.source($.source) if defined $.source;
     }
 
     multi method load(Str $filename) {
